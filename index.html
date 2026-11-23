@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>BAYLU · Productos en tendencia</title>
+<meta name="description" content="Productos virales, novedosos y en tendencia con envíos a todo Argentina.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'><text y='9' font-size='9'>🖤</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@400;500&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css"></head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="grit" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".3" numOctaves="2" seed="7" result="f"/><feColorMatrix in="f" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 12 -7" result="fm"/><feTurbulence type="fractalNoise" baseFrequency=".012" numOctaves="2" seed="3" result="c"/><feColorMatrix in="c" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 10 -5" result="cm"/><feComposite in="fm" in2="cm" operator="in" result="m"/><feComposite in="SourceGraphic" in2="m" operator="out"/></filter><filter id="grits" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="2" seed="7" result="f"/><feColorMatrix in="f" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 12 -7" result="fm"/><feTurbulence type="fractalNoise" baseFrequency=".05" numOctaves="2" seed="3" result="c"/><feColorMatrix in="c" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 10 -5" result="cm"/><feComposite in="fm" in2="cm" operator="in" result="m"/><feComposite in="SourceGraphic" in2="m" operator="out"/></filter></svg>
+<div class="promo" id="promo"></div>
+<header class="top"><a class="mark" href="#/">BAYLU</a><button class="btn" id="open" aria-label="Abrir carrito">🛒 <span id="count">0</span></button>
+<input id="q" type="search" placeholder="Buscar productos" aria-label="Buscar productos"></header>
+<main id="app"><p class="msg">Cargando…</p></main>
+<footer id="foot"></footer>
+<aside id="drawer" aria-label="Carrito" aria-hidden="true">
+<div style="display:flex;justify-content:space-between;align-items:center"><span class="mark" style="font-size:22px">CARRITO</span><button class="btn" id="close">Cerrar</button></div>
+<div id="lines"></div><div id="sums"></div><a class="btn solid" id="wa" target="_blank" rel="noopener" style="text-align:center">Finalizar pedido por WhatsApp</a></aside>
+<script type="module" src="app.js"></script></body></html>

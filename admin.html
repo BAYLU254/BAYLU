@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow"><title>BAYLU · Administración</title>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@400;500&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+[hidden]{display:none!important}
+.shell{display:flex;min-height:100vh}.content{flex:1;padding:20px 16px 100px;max-width:960px;margin:0 auto;width:100%}
+.side{width:220px;flex:none;border-right:1px solid var(--line);padding:22px 12px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:6px}
+.side .mark{font-size:22px;margin:0 8px 18px}.side button,.side a{background:none;border:0;color:var(--mute);text-align:left;padding:12px;font:600 14px var(--body);cursor:pointer;display:block}
+.side button.on{color:#000;background:var(--hi)}.side .sp{flex:1}
+@media(max-width:799px){.side{position:fixed;inset:auto 0 0 0;width:100%;height:auto;flex-direction:row;border:0;border-top:1px solid var(--line);background:var(--bg);z-index:10;padding:4px 4px calc(4px + env(safe-area-inset-bottom));gap:2px}.side button,.side a{flex:1;text-align:center;font-size:12px;padding:12px 4px}.side .mark,.side .sp{display:none}}
+h1{font:400 32px var(--display);letter-spacing:.06em;color:var(--hi);margin:6px 0 18px}h3.s{font:400 20px var(--display);letter-spacing:.06em;color:var(--hi);margin:26px 0 10px}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}@media(min-width:800px){.stats{grid-template-columns:repeat(4,1fr)}}
+.stat{background:var(--surface);border:1px solid var(--line);padding:16px}.stat b{display:block;font:400 38px var(--display);color:var(--hi)}.stat span{font-size:13px;color:var(--mute)}
+.bar{display:flex;gap:10px;margin-bottom:14px}.bar input{flex:1}
+label{display:block;font-size:13px;color:var(--mute);margin:14px 0 5px}
+input,select,textarea{width:100%;background:var(--surface);color:var(--hi);border:1px solid var(--line);padding:12px;font:400 16px var(--body)}
+.chk{display:inline-flex;gap:8px;align-items:center;margin:8px 16px 0 0;color:var(--text);font-size:15px}input[type=checkbox]{width:20px;height:20px;padding:0}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.rowp{display:grid;grid-template-columns:56px 1fr;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);align-items:center}
+.rowp img,.rowp .z{width:56px;height:56px;object-fit:cover;background:var(--surface)}.rowp small{color:var(--mute)}
+.acts{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap}.acts .btn{flex:1;padding:9px 10px;font-size:13px;min-width:90px}
+.pill{font:600 11px var(--body);padding:2px 7px;border:1px solid var(--logo);margin-left:6px}.pill.on{background:var(--hi);color:#000}
+.imgs{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}.imgs div{position:relative}.imgs img{width:84px;height:84px;object-fit:cover}.imgs button{position:absolute;top:0;right:0;width:28px;height:28px;background:#000;color:#fff;border:0;cursor:pointer}
+.errs{color:#e8a0a0;font-size:14px;margin:12px 0}.errs div{margin:2px 0}
+#toast{position:fixed;left:50%;bottom:90px;transform:translate(-50%,20px);background:var(--hi);color:#000;padding:12px 18px;font:600 14px var(--body);opacity:0;transition:.2s;z-index:30;pointer-events:none}#toast.on{opacity:1;transform:translate(-50%,0)}
+.login{max-width:380px;margin:12vh auto;padding:0 20px}.login .mark{display:block;font-size:34px;margin-bottom:22px}
+</style></head>
+<body>
+<form id="login" class="login" hidden><span class="mark">BAYLU</span><label for="em">Email</label><input id="em" type="email" required autocomplete="username"><label for="pw">Contraseña</label><input id="pw" type="password" required autocomplete="current-password"><div class="errs" id="err"></div><button class="btn solid" style="width:100%">Ingresar</button><p style="text-align:center"><a href="/" style="color:var(--mute)">Volver a la tienda</a></p></form>
+<div class="shell" id="app" hidden>
+<nav class="side" aria-label="Administración"><span class="mark">BAYLU</span><button data-v="dash">Resumen</button><button data-v="prods">Productos</button><button data-v="cats">Categorías</button><span class="sp"></span><a href="/">Ver tienda</a><button id="out">Salir</button></nav>
+<main class="content"><div id="view"></div></main></div>
+<div id="toast" role="status"></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="grit" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".3" numOctaves="2" seed="7" result="f"/><feColorMatrix in="f" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 12 -7" result="fm"/><feTurbulence type="fractalNoise" baseFrequency=".012" numOctaves="2" seed="3" result="c"/><feColorMatrix in="c" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 10 -5" result="cm"/><feComposite in="fm" in2="cm" operator="in" result="m"/><feComposite in="SourceGraphic" in2="m" operator="out"/></filter><filter id="grits" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="2" seed="7" result="f"/><feColorMatrix in="f" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 12 -7" result="fm"/><feTurbulence type="fractalNoise" baseFrequency=".05" numOctaves="2" seed="3" result="c"/><feColorMatrix in="c" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 10 -5" result="cm"/><feComposite in="fm" in2="cm" operator="in" result="m"/><feComposite in="SourceGraphic" in2="m" operator="out"/></filter></svg>
+<script type="module">
+import {createClient} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/+esm";
+import {SUPABASE_URL,SUPABASE_ANON_KEY} from "./config.js";
+const sb=createClient(SUPABASE_URL,SUPABASE_ANON_KEY),$=s=>document.querySelector(s);
+const TAGS={viral:"Viral",nuevo:"Nuevo",mas_vendido:"Más vendido",oferta:"Oferta",destacado:"Destacado"};
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const slugify=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")||"item";
+const money=v=>"$"+Number(v).toLocaleString("es-AR");
+let P=[],C=[],view="dash",imgs=[],editId=null,q="";
+const toast=m=>{const t=$("#toast");t.textContent=m;t.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove("on"),3200)};
+const show=w=>{$("#login").hidden=w!=="login";$("#app").hidden=w!=="app"};
+const path=u=>u.split("/products/")[1];
+async function init(){const {data:{session}}=await sb.auth.getSession();if(!session)return show("login");
+  const {data}=await sb.rpc("is_admin");if(!data){await sb.auth.signOut();$("#err").textContent="Este usuario no tiene permisos de administrador.";return show("login")}
+  show("app");await refresh();nav("dash")}
+sb.auth.onAuthStateChange(e=>{if(e==="SIGNED_OUT")show("login")});
+$("#login").onsubmit=async e=>{e.preventDefault();$("#err").textContent="";const {error}=await sb.auth.signInWithPassword({email:$("#em").value.trim(),password:$("#pw").value});if(error)$("#err").textContent="Email o contraseña incorrectos.";else init()};
+$("#out").onclick=()=>sb.auth.signOut();
+async function refresh(){const [a,b]=await Promise.all([sb.from("products").select("*").order("created_at",{ascending:false}),sb.from("categories").select("*").order("name")]);
+  if(a.error||b.error){toast("No se pudieron cargar los datos. Volvé a ingresar.");await sb.auth.signOut();return}P=a.data;C=b.data}
+function nav(v){view=v;document.querySelectorAll(".side button[data-v]").forEach(b=>b.classList.toggle("on",b.dataset.v===(v==="form"?"prods":v)));({dash,prods,cats,form})[v]();window.scrollTo(0,0)}
+document.querySelectorAll(".side button[data-v]").forEach(b=>b.onclick=()=>{if(b.dataset.v==="prods"||b.dataset.v==="dash"){editId=null;imgs=[]}nav(b.dataset.v)});
+const row=p=>`<div class="rowp">${p.images?.[0]?`<img src="${esc(p.images[0])}" alt="">`:'<div class="z"></div>'}<div>${esc(p.name)}<span class="pill ${p.published?"on":""}">${p.published?"Publicado":"Oculto"}</span><br><small>${money(p.price)} · stock ${p.stock}${p.stock<=0?" (sin stock)":""}</small></div><div class="acts"><button class="btn" data-e="${p.id}">Editar</button><button class="btn" data-t="${p.id}">${p.published?"Ocultar":"Publicar"}</button><button class="btn" data-d="${p.id}">Eliminar</button></div></div>`;
+function dash(){const n=f=>P.filter(f).length;
+  $("#view").innerHTML=`<h1>Resumen</h1><div class="stats"><div class="stat"><b>${P.length}</b><span>Productos</span></div><div class="stat"><b>${n(p=>p.published)}</b><span>Publicados</span></div><div class="stat"><b>${n(p=>p.stock<=0)}</b><span>Sin stock</span></div><div class="stat"><b>${n(p=>p.tags?.includes("destacado"))}</b><span>Destacados</span></div></div>
+  <h3 class="s">Últimos agregados</h3>${P.slice(0,5).map(row).join("")||"<p>Todavía no hay productos.</p>"}<p><button class="btn solid" data-new>+ Nuevo producto</button></p>`}
+function prods(){$("#view").innerHTML=`<h1>Productos</h1><div class="bar"><input id="sq" type="search" placeholder="Buscar" value="${esc(q)}" aria-label="Buscar"><button class="btn solid" data-new>+ Nuevo</button></div><div id="pl"></div>`;
+  const draw=()=>{const l=P.filter(p=>p.name.toLowerCase().includes(q));$("#pl").innerHTML=l.map(row).join("")||"<p>Sin productos.</p>"};draw();$("#sq").oninput=e=>{q=e.target.value.toLowerCase();draw()}}
+function form(){const p=P.find(x=>x.id===editId)||{name:"",description:"",price:"",old_price:"",stock:0,category_id:"",variants:[],published:false,tags:[]};
+  $("#view").innerHTML=`<h1>${editId?"Editar producto":"Nuevo producto"}</h1><form id="f" novalidate>
+  <label for="name">Nombre</label><input id="name" maxlength="120" value="${esc(p.name)}">
+  <label for="desc">Descripción</label><textarea id="desc" rows="4">${esc(p.description)}</textarea>
+  <div class="cols"><div><label for="price">Precio (ARS)</label><input id="price" type="number" inputmode="decimal" min="0" step="any" value="${p.price}"></div><div><label for="old">Precio anterior</label><input id="old" type="number" inputmode="decimal" min="0" step="any" value="${p.old_price??""}"></div>
+  <div><label for="stock">Stock</label><input id="stock" type="number" inputmode="numeric" min="0" step="1" value="${p.stock}"></div><div><label for="cat">Categoría</label><select id="cat"><option value="">Sin categoría</option>${C.map(c=>`<option value="${c.id}" ${c.id===p.category_id?"selected":""}>${esc(c.name)}</option>`).join("")}</select></div></div>
+  <label for="vars">Variantes (separadas por coma)</label><input id="vars" placeholder="Negro, Blanco" value="${esc((p.variants||[]).join(", "))}">
+  <label>Etiquetas</label>${Object.entries(TAGS).map(([k,v])=>`<label class="chk"><input type="checkbox" name="tag" value="${k}" ${p.tags?.includes(k)?"checked":""}>${v}</label>`).join("")}
+  <label>Fotos (hasta 8, la primera es la principal)</label><input id="file" type="file" accept="image/png,image/jpeg,image/webp" multiple><div class="imgs" id="imgs"></div>
+  <label class="chk" style="margin-top:20px"><input type="checkbox" id="pub" ${p.published?"checked":""}>Publicado en la tienda</label>
+  <div class="errs" id="ferr"></div><button class="btn solid" style="width:100%;padding:16px">Guardar producto</button> <button class="btn" type="button" id="cancel" style="width:100%;margin-top:10px">Cancelar</button></form>`;
+  drawImgs();$("#cancel").onclick=()=>{editId=null;imgs=[];nav("prods")};$("#f").onsubmit=save;$("#file").onchange=upload}
+function drawImgs(){$("#imgs").innerHTML=imgs.map((u,i)=>`<div><img src="${esc(u)}" alt=""><button type="button" data-ri="${i}" aria-label="Quitar foto">×</button></div>`).join("")}
+async function upload(e){const err=$("#ferr");err.textContent="";for(const f of e.target.files){
+  if(imgs.length>=8){err.textContent="Máximo 8 fotos.";break}if(!/^image\/(png|jpeg|webp)$/.test(f.type)||f.size>5*1024*1024){err.textContent=`"${f.name}": usá JPG, PNG o WebP de hasta 5 MB.`;continue}
+  err.textContent="Subiendo…";const name=`${crypto.randomUUID()}.${f.type.split("/")[1].replace("jpeg","jpg")}`;const {error}=await sb.storage.from("products").upload(name,f,{contentType:f.type});
+  if(error){err.textContent="No se pudo subir: "+error.message;return}imgs.push(sb.storage.from("products").getPublicUrl(name).data.publicUrl);err.textContent=""}e.target.value="";drawImgs()}
+async function save(e){e.preventDefault();const g=id=>$("#"+id).value;
+  const r={name:g("name").trim(),description:g("desc").trim(),price:parseFloat(g("price")),old_price:g("old")===""?null:parseFloat(g("old")),stock:parseInt(g("stock"),10),category_id:g("cat")||null,
+    variants:g("vars").split(",").map(s=>s.trim()).filter(Boolean),published:$("#pub").checked,images:imgs,tags:[...document.querySelectorAll("[name=tag]:checked")].map(i=>i.value)};
+  const er=[];if(r.name.length<2||r.name.length>120)er.push("El nombre debe tener entre 2 y 120 caracteres.");if(isNaN(r.price)||r.price<0)er.push("Ingresá un precio válido.");
+  if(r.old_price!==null&&(isNaN(r.old_price)||r.old_price<=r.price))er.push("El precio anterior debe ser mayor que el precio actual, o dejalo vacío.");if(isNaN(r.stock)||r.stock<0)er.push("El stock debe ser un número entero de 0 o más.");
+  if(er.length){$("#ferr").innerHTML=er.map(x=>`<div>• ${x}</div>`).join("");return}
+  const old=P.find(x=>x.id===editId);const res=editId?await sb.from("products").update(r).eq("id",editId):await sb.from("products").insert({...r,slug:slugify(r.name)+"-"+Math.random().toString(36).slice(2,6)});
+  if(res.error){$("#ferr").textContent="No se pudo guardar: "+res.error.message;return}
+  const gone=(old?.images||[]).filter(u=>!imgs.includes(u)).map(path).filter(Boolean);if(gone.length)await sb.storage.from("products").remove(gone);
+  toast("Producto guardado");editId=null;imgs=[];await refresh();nav("prods")}
+function cats(){$("#view").innerHTML=`<h1>Categorías</h1>${C.map(c=>`<div class="rowp" style="grid-template-columns:1fr"><div>${esc(c.name)} <small>· ${P.filter(p=>p.category_id===c.id).length} productos</small></div><div class="acts"><button class="btn" data-rc="${c.id}">Renombrar</button><button class="btn" data-dc="${c.id}">Eliminar</button></div></div>`).join("")||"<p>Sin categorías.</p>"}
+  <form id="cf" class="bar" style="margin-top:18px"><input id="cn" placeholder="Nueva categoría" maxlength="40" required><button class="btn solid">Crear</button></form>`;
+  $("#cf").onsubmit=async e=>{e.preventDefault();const n=$("#cn").value.trim();if(!n)return;const r=await sb.from("categories").insert({name:n,slug:slugify(n)});if(r.error)return toast("No se pudo crear (¿ya existe?)");toast("Categoría creada");await refresh();cats()}}
+document.addEventListener("click",async e=>{const d=e.target.dataset;if(!d)return;
+  if("new" in d){editId=null;imgs=[];nav("form")}
+  if(d.e){editId=d.e;imgs=[...(P.find(x=>x.id===d.e).images||[])];nav("form")}
+  if(d.ri){imgs.splice(+d.ri,1);drawImgs()}
+  if(d.t){const p=P.find(x=>x.id===d.t),r=await sb.from("products").update({published:!p.published}).eq("id",p.id);if(r.error)return toast("No se pudo cambiar");await refresh();nav(view)}
+  if(d.d&&confirm("¿Eliminar este producto? No se puede deshacer.")){const p=P.find(x=>x.id===d.d),r=await sb.from("products").delete().eq("id",d.d);if(r.error)return toast("No se pudo eliminar");
+    const f=(p.images||[]).map(path).filter(Boolean);if(f.length)await sb.storage.from("products").remove(f);toast("Producto eliminado");await refresh();nav(view)}
+  if(d.dc&&confirm("¿Eliminar la categoría? Los productos quedan sin categoría.")){await sb.from("categories").delete().eq("id",d.dc);await refresh();cats()}
+  if(d.rc){const n=(prompt("Nuevo nombre")||"").trim();if(n){const r=await sb.from("categories").update({name:n,slug:slugify(n)}).eq("id",d.rc);if(r.error)toast("No se pudo renombrar");await refresh();cats()}}});
+init();
+</script></body></html>
